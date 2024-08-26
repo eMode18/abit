@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const Success = async ({
+const RequestSuccess = async ({
   params: { userId },
   searchParams,
 }: SearchParamProps) => {
@@ -15,7 +15,7 @@ const Success = async ({
   const appointment = await getAppointment(appointmentId);
 
   const doctor = Doctors.find(
-    (doc) => doc.name === appointment.primaryPhysician
+    (doctor) => doctor.name === appointment.primaryPhysician
   );
 
   return (
@@ -40,7 +40,7 @@ const Success = async ({
           />
           <h2 className="header mb-6 max-w-[600px] text-center">
             Your <span className="text-green-500">appointment request</span> has
-            been successfully submitted
+            been submitted successfully
           </h2>
           <p>You'll receive your appointment confirmation shortly</p>
         </section>
@@ -81,4 +81,4 @@ const Success = async ({
   );
 };
 
-export default Success;
+export default RequestSuccess;

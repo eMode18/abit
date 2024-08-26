@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans as FontSans } from "next/font/google";
 import "./globals.css";
 
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from "next-themes";
 
 import { cn } from "@/lib/utils";
 

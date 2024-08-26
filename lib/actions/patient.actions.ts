@@ -17,19 +17,24 @@ import { InputFile } from "node-appwrite/file";
 
 export const createUser = async (user: CreateUserParams) => {
   try {
-    const newUser = await users.create(
+    const newuser = await users.create(
       ID.unique(),
       user.email,
       user.phone,
       undefined,
       user.name
     );
+
+    return parseStringify(newuser);
   } catch (error: any) {
     if (error && error?.code === 409) {
-      const documents = await users.list([Query.equal("email", [user.email])]);
+      const existingUser = await users.list([
+        Query.equal("email", [user.email]),
+      ]);
 
-      return documents?.users[0];
+      return existingUser?.users[0];
     }
+    console.error("An error occurred while creating a new user:", error);
   }
 };
 
@@ -81,8 +86,10 @@ export const registerPatient = async ({
       PATIENT_COLLECTION_ID!,
       ID.unique(),
       {
-        identificationDocument: file?.$id || null,
-        identificationDocumentUrl: `${ENDPOINT}/storage/buckets/${BUCKET_ID}/files/${file?.$id}/view?project=${PROJECT_ID}`,
+        identificationDocumentId: file?.$id ? file.$id : null,
+        identificationDocumentUrl: file?.$id
+          ? `${ENDPOINT}/storage/buckets/${BUCKET_ID}/files/${file.$id}/view??project=${PROJECT_ID}`
+          : null,
         ...patient,
       }
     );

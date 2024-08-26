@@ -27,12 +27,12 @@ export const PatientFormDefaultValues = {
 };
 
 export const IdentificationTypes = [
-  "Birth Certificate",
+  "National Identity Card",
   "Driver's License",
   "Medical Insurance Card/Policy",
   "Military ID Card",
-  "National Identity Card",
   "Passport",
+  "Birth Certificate",
   "Resident Alien Card (Green Card)",
   "Student ID Card",
   "Voter ID Card",
@@ -88,5 +88,5 @@ export const Doctors = [
 export const StatusIcon = {
   scheduled: "/assets/icons/check.svg",
   pending: "/assets/icons/pending.svg",
-  canceled: "/assets/icons/canceled.svg",
+  canceled: "/assets/icons/cancelled.svg",
 };

@@ -14,7 +14,7 @@ const FileUploader = ({ files, onChange }: FileUplaoderProps) => {
   const onDrop = useCallback((acceptedFiles: File[]) => {
     onChange(acceptedFiles);
   }, []);
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   return (
     <div {...getRootProps()} className="file-upload">
@@ -40,7 +40,9 @@ const FileUploader = ({ files, onChange }: FileUplaoderProps) => {
               <span className="text-green-500">Click here to uplaod</span> or
               drag and drop
             </p>
-            <p>SVG, PNG, JPG, or Gif (max 800x400)</p>
+            <p className="text-12-regular">
+              SVG, PNG, JPG, or Gif (max 800x400px)
+            </p>
           </div>
         </>
       )}

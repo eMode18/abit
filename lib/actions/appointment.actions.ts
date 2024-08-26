@@ -5,8 +5,9 @@ import {
   APPOINTMENT_COLLECTION_ID,
   DATABASE_ID,
   databases,
+  messaging,
 } from "../appwrite.config";
-import { parseStringify } from "../utils";
+import { formatDateTime, parseStringify } from "../utils";
 import { Appointment } from "@/types/appwrite.types";
 import { revalidatePath } from "next/cache";
 
@@ -21,9 +22,11 @@ export const createAppointment = async (
       appointment
     );
 
+    revalidatePath(`/admin`);
+
     return parseStringify(newAppointment);
   } catch (error) {
-    console.log(error);
+    console.log("An error occurred while creating a new appointment:", error);
   }
 };
 
@@ -97,7 +100,7 @@ export const updateAppointment = async ({
     );
 
     if (!updatedAppointment) {
-      throw new Error("Appointment not appointment");
+      throw new Error("Appointment not made");
     }
 
     // TODO SMS notification

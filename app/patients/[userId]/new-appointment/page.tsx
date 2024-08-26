@@ -2,26 +2,26 @@ import AppointmentForm from "@/components/forms/AppointmentForm";
 import { getPatient } from "@/lib/actions/patient.actions";
 import Image from "next/image";
 
-export default async function NewAppointment({
+export default async function Appointment({
   params: { userId },
 }: SearchParamProps) {
   const patient = await getPatient(userId);
   return (
     <div className="flex h-screen max-h-screen">
-      <section className="remove-scrollbar container my-auto">
+      <section className="remove-scrollbar container">
         <div className="sub-container max-w-[860px] flex-1 justify-between">
           <Image
             src="/assets/icons/logo-full.svg"
             height={1000}
             width={1000}
-            alt="patient"
+            alt="logo"
             className="mb-12 h-10 w-fit"
           />
           {/* This is an appointment form component */}
           <AppointmentForm
             type="create"
             userId={userId}
-            patientId={patient.$id}
+            patientId={patient?.$id}
           />
 
           <p className="copyright mt-10 py-12">© 2024 AtibCare</p>

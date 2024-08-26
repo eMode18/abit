@@ -13,6 +13,7 @@ import {
 import { Button } from "./ui/button";
 import AppointmentForm from "./forms/AppointmentForm";
 import { Appointment } from "@/types/appwrite.types";
+import "react-datepicker/dist/react-datepicker.css";
 
 const AppointmentModal = ({
   type,
@@ -24,6 +25,8 @@ const AppointmentModal = ({
   patientId: string;
   userId: string;
   appointment?: Appointment;
+  title: string;
+  description: string;
 }) => {
   const [open, setOpen] = useState(false);
 

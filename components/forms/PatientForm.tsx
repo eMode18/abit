@@ -1,25 +1,18 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Form } from "@/components/ui/form";
-import CustomFormField from "../CustomFormField";
-import SubmitButton from "../SubmitButton";
-import { useState } from "react";
-import { UserFormValidation } from "@/lib/validation";
-import { useRouter } from "next/navigation";
-import { createUser } from "@/lib/actions/patient.actions";
 
-export enum FormFieldType {
-  INPUT = "input",
-  TEXTAREA = "textarea",
-  PHONE_INPUT = "phoneInput",
-  CHECKBOX = "checkbox",
-  DATE_PICKER = "datePicker",
-  SELECT = "select",
-  SKELETON = "skeleton",
-}
+import { Form } from "@/components/ui/form";
+import { createUser } from "@/lib/actions/patient.actions";
+import { UserFormValidation } from "@/lib/validation";
+
+import "react-phone-number-input/style.css";
+import CustomFormField, { FormFieldType } from "../CustomFormField";
+import SubmitButton from "../SubmitButton";
 
 const PatientForm = () => {
   // create router to push to registration form
@@ -95,7 +88,7 @@ const PatientForm = () => {
           control={form.control}
           name="phone"
           label="Phone Number"
-          placeholder="+254 712 345678"
+          placeholder="(254) 712 345678"
         />
         <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
       </form>

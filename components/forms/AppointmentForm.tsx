@@ -1,25 +1,26 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Dispatch, SetStateAction, useState } from "react";
-import { getAppointmentSchema } from "@/lib/validation";
-import { useRouter } from "next/navigation";
-
+import { SelectItem } from "@/components/ui/select";
+import { Doctors } from "@/constants";
 import {
   createAppointment,
   updateAppointment,
 } from "@/lib/actions/appointment.actions";
+import { getAppointmentSchema } from "@/lib/validation";
 import { Appointment } from "@/types/appwrite.types";
-import { Form } from "../ui/form";
-import CustomFormField from "../CustomFormField";
-import { FormFieldType } from "./PatientForm";
-import { Doctors } from "@/constants";
-import { SelectItem } from "../ui/select";
-import Image from "next/image";
+
+import "react-datepicker/dist/react-datepicker.css";
+
+import CustomFormField, { FormFieldType } from "../CustomFormField";
 import SubmitButton from "../SubmitButton";
+import { Form } from "../ui/form";
 
 const AppointmentForm = ({
   userId,
@@ -48,16 +49,20 @@ const AppointmentForm = ({
   const form = useForm<z.infer<typeof AppointmentFormValidation>>({
     resolver: zodResolver(AppointmentFormValidation),
     defaultValues: {
-      primaryPhysician: appointment ? appointment.primaryPhysician : "",
-      schedule: appointment ? new Date(appointment.schedule) : new Date(),
+      primaryPhysician: appointment ? appointment?.primaryPhysician : "",
+      schedule: appointment
+        ? new Date(appointment?.schedule!)
+        : new Date(Date.now()),
       reason: appointment ? appointment.reason : "",
-      note: appointment ? appointment.note : "",
+      note: appointment?.note || "",
       cancelationReason: appointment ? appointment.cancellationReason : "",
     },
   });
 
   // an onsubmit handler.
-  async function onSubmit(values: z.infer<typeof AppointmentFormValidation>) {
+  const onSubmit = async (
+    values: z.infer<typeof AppointmentFormValidation>
+  ) => {
     setIsLoading(true);
 
     let status;
@@ -71,7 +76,6 @@ const AppointmentForm = ({
         break;
       default:
         status = "pending";
-        break;
     }
 
     try {
@@ -101,7 +105,7 @@ const AppointmentForm = ({
               primaryPhysician: values.primaryPhysician,
               schedule: new Date(values.schedule),
               status: status as Status,
-              cancellaionReason: values.cancelationReason,
+              cancelationReason: values.cancelationReason,
             },
             type,
           };
@@ -121,7 +125,7 @@ const AppointmentForm = ({
     }
 
     setIsLoading(false);
-  }
+  };
 
   let buttonLabel;
 
@@ -129,12 +133,11 @@ const AppointmentForm = ({
     case "cancel":
       buttonLabel = "Cancel Appointment";
       break;
-    case "create":
-      buttonLabel = "Create Appointment";
-      break;
     case "schedule":
       buttonLabel = "Schedule Appointment";
       break;
+    default:
+      buttonLabel = "Submit Appointment";
   }
 
   return (
@@ -162,8 +165,8 @@ const AppointmentForm = ({
               label="Doctor"
               placeholder="Select a doctor"
             >
-              {Doctors.map((doctor) => (
-                <SelectItem key={doctor.name} value={doctor.name}>
+              {Doctors.map((doctor, i) => (
+                <SelectItem key={doctor.name + i} value={doctor.name}>
                   <div className="flex cursor-pointer items-center gap-2">
                     <Image
                       src={doctor.image}
@@ -188,21 +191,27 @@ const AppointmentForm = ({
               dateFormat="MM/dd/yyyy - h:mm aa"
             />
 
-            <div className="flex flex-col gap-6 xl:flex-row">
+            <div
+              className={`flex flex-col gap-6  ${
+                type === "create" && "xl:flex-row"
+              }`}
+            >
               <CustomFormField
                 fieldType={FormFieldType.TEXTAREA}
                 control={form.control}
                 name="reason"
-                label="Notes"
-                placeholder="Enter reason for appointment"
+                label="Appointment Reason"
+                placeholder="Annual monthly checkup"
+                disabled={type === "schedule"}
               />
 
               <CustomFormField
                 fieldType={FormFieldType.TEXTAREA}
                 control={form.control}
-                name="notes"
-                label="Notes"
-                placeholder="Enter Notes"
+                name="note"
+                label="Notes/Comments"
+                placeholder="Prefer morning appointments, if possible"
+                disabled={type === "schedule"}
               />
             </div>
           </>
@@ -216,7 +225,7 @@ const AppointmentForm = ({
             control={form.control}
             name="cancelationReason"
             label="Reason for cancelation"
-            placeholder="Enter reason for cancelling your appointment"
+            placeholder="An urgent work meeting came up"
           />
         )}
 

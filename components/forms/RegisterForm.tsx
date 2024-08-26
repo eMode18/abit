@@ -1,27 +1,30 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
 import { Form, FormControl } from "@/components/ui/form";
-import CustomFormField from "../CustomFormField";
-import SubmitButton from "../SubmitButton";
-import { useState } from "react";
-import { PatientFormValidation, UserFormValidation } from "@/lib/validation";
-import { useRouter } from "next/navigation";
-import { createUser, registerPatient } from "@/lib/actions/patient.actions";
-import { FormFieldType } from "./PatientForm";
+import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { SelectItem } from "@/components/ui/select";
 import {
   Doctors,
   GenderOptions,
   IdentificationTypes,
   PatientFormDefaultValues,
 } from "@/constants";
-import { Label } from "../ui/label";
-import { SelectItem } from "../ui/select";
-import Image from "next/image";
+import { registerPatient } from "@/lib/actions/patient.actions";
+import { PatientFormValidation } from "@/lib/validation";
+
+import "react-datepicker/dist/react-datepicker.css";
+import "react-phone-number-input/style.css";
+import CustomFormField, { FormFieldType } from "../CustomFormField";
 import FileUploader from "../FileUploader";
+import SubmitButton from "../SubmitButton";
 
 const RegisterForm = ({ user }: { user: User }) => {
   // create router to push to registration form
@@ -35,9 +38,9 @@ const RegisterForm = ({ user }: { user: User }) => {
     resolver: zodResolver(PatientFormValidation),
     defaultValues: {
       ...PatientFormDefaultValues,
-      name: "",
-      email: "",
-      phone: "",
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
     },
   });
 
@@ -146,13 +149,13 @@ const RegisterForm = ({ user }: { user: User }) => {
             control={form.control}
             name="phone"
             label="Phone Number"
-            placeholder="+254 712 345678"
+            placeholder="(254 )712 345678"
           />
         </div>
 
         {/* birthDate and gender */}
 
-        <div className="flex flex-1 gap-6 xl:flex-row">
+        <div className="flex flex-col gap-6 xl:flex-row">
           <CustomFormField
             fieldType={FormFieldType.DATE_PICKER}
             control={form.control}
@@ -188,7 +191,7 @@ const RegisterForm = ({ user }: { user: User }) => {
 
         {/*Residence and occupation */}
 
-        <div className="flex flex-1 gap-6 xl:flex-row">
+        <div className="flex flex-col gap-6 xl:flex-row">
           <CustomFormField
             fieldType={FormFieldType.INPUT}
             control={form.control}
@@ -257,7 +260,7 @@ const RegisterForm = ({ user }: { user: User }) => {
 
         {/*Insurance details*/}
 
-        <div className="flex flex-1 gap-6 xl:flex-row">
+        <div className="flex flex-col gap-6 xl:flex-row">
           <CustomFormField
             fieldType={FormFieldType.INPUT}
             control={form.control}
@@ -308,7 +311,7 @@ const RegisterForm = ({ user }: { user: User }) => {
             control={form.control}
             name="pastMedicalHistory"
             label="Past medical history (if exists)"
-            placeholder="Appendectomy, Tonsillectomy"
+            placeholder="Asthma diagnosis in childhood, etc.."
           />
         </div>
 
@@ -368,7 +371,7 @@ const RegisterForm = ({ user }: { user: User }) => {
           fieldType={FormFieldType.CHECKBOX}
           control={form.control}
           name="treatmentConsent"
-          label="I agree to treatment"
+          label="I agree to treatment for my listed health conditions"
         />
 
         <CustomFormField
@@ -385,7 +388,7 @@ const RegisterForm = ({ user }: { user: User }) => {
           label="I agree to the privacy policy"
         />
 
-        <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
+        <SubmitButton isLoading={isLoading}>Submit and Continue</SubmitButton>
       </form>
     </Form>
   );
