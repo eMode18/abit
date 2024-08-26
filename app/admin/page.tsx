@@ -1,10 +1,10 @@
-import DataTable from "@/components/table/DataTable";
+import { DataTable } from "@/components/table/DataTable";
 import StatCard from "@/components/StatCard";
 import { getRecentAppointmentList } from "@/lib/actions/appointment.actions";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import columns from "@/components/table/columns";
+import { columns } from "@/components/table/columns";
 
 const Admin = async () => {
   const appointments = await getRecentAppointmentList();
@@ -15,8 +15,8 @@ const Admin = async () => {
         <Link href="/" className="cursor-pointer">
           <Image
             src="/assets/icons/logo-full.svg"
-            height={32}
-            width={32}
+            height={64}
+            width={64}
             alt="logo"
             className="h-8 w-fit"
           />
