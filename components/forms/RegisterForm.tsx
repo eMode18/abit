@@ -42,7 +42,7 @@ const RegisterForm = ({ user }: { user: User }) => {
   });
 
   // an onsubmit handler.
-  async function onSubmit(values: z.infer<typeof PatientFormValidation>) {
+  const onSubmit = async (values: z.infer<typeof PatientFormValidation>) => {
     setIsLoading(true);
 
     let formData;
@@ -53,33 +53,56 @@ const RegisterForm = ({ user }: { user: User }) => {
 
     if (
       values.identificationDocument &&
-      values.identificationDocument.length > 0
+      values.identificationDocument?.length > 0
     ) {
       const blobFile = new Blob([values.identificationDocument[0]], {
         type: values.identificationDocument[0].type,
       });
+
       formData = new FormData();
       formData.append("blobFile", blobFile);
       formData.append("fileName", values.identificationDocument[0].name);
     }
 
     try {
-      const patientData = {
-        ...values,
+      const patient = {
         userId: user.$id,
+        name: values.name,
+        email: values.email,
+        phone: values.phone,
         birthDate: new Date(values.birthDate),
-        identificationDocument: formData,
+        gender: values.gender,
+        address: values.address,
+        occupation: values.occupation,
+        emergencyContactName: values.emergencyContactName,
+        emergencyContactNumber: values.emergencyContactNumber,
+        primaryPhysician: values.primaryPhysician,
+        insuranceProvider: values.insuranceProvider,
+        insurancePolicyNumber: values.insurancePolicyNumber,
+        allergies: values.allergies,
+        currentMedication: values.currentMedication,
+        familyMedicalHistory: values.familyMedicalHistory,
+        pastMedicalHistory: values.pastMedicalHistory,
+        identificationType: values.identificationType,
+        identificationNumber: values.identificationNumber,
+        identificationDocument: values.identificationDocument
+          ? formData
+          : undefined,
+        privacyConsent: values.privacyConsent,
       };
 
-      // @ts-ignore
-      const patient = await registerPatient(patientData);
+      const newPatient = await registerPatient(patient);
 
-      if (patient) router.push(`/patients/${user.$id}/new-appointment`);
+      if (newPatient) {
+        router.push(`/patients/${user.$id}/new-appointment`);
+      }
     } catch (error) {
       console.log(error);
     }
+
     setIsLoading(false);
-  }
+  };
+
   return (
     <Form {...form}>
       <form
@@ -96,6 +119,7 @@ const RegisterForm = ({ user }: { user: User }) => {
           </div>
         </section>
 
+        {/* Name */}
         <CustomFormField
           fieldType={FormFieldType.INPUT}
           control={form.control}
@@ -105,7 +129,7 @@ const RegisterForm = ({ user }: { user: User }) => {
           iconSrc="/assets/icons/user.svg"
           iconAlt="user"
         />
-
+        {/* Email address and phone number */}
         <div className="flex flex-1 gap-6 xl:flex-row">
           <CustomFormField
             fieldType={FormFieldType.INPUT}
@@ -148,8 +172,8 @@ const RegisterForm = ({ user }: { user: User }) => {
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
-                  {GenderOptions.map((option) => (
-                    <div key={option} className="radio-group">
+                  {GenderOptions.map((option, i) => (
+                    <div key={option + i} className="radio-group">
                       <RadioGroupItem value={option} id={option} />
                       <Label htmlFor={option} className="cursor-pointer">
                         {option}
@@ -196,7 +220,7 @@ const RegisterForm = ({ user }: { user: User }) => {
             control={form.control}
             name="emergencyContactNumber"
             label="Emergency contact number"
-            placeholder="+254 712 345678"
+            placeholder="(254) 712 345678"
           />
         </div>
 
@@ -215,8 +239,8 @@ const RegisterForm = ({ user }: { user: User }) => {
           label="Primary Physician"
           placeholder="Select a physician"
         >
-          {Doctors.map((doctor) => (
-            <SelectItem key={doctor.name} value={doctor.name}>
+          {Doctors.map((doctor, i) => (
+            <SelectItem key={doctor.name + i} value={doctor.name}>
               <div className="flex cursor-pointer items-center gap-2">
                 <Image
                   src={doctor.image}
@@ -276,14 +300,14 @@ const RegisterForm = ({ user }: { user: User }) => {
             fieldType={FormFieldType.TEXTAREA}
             control={form.control}
             name="familyMedicalHistory"
-            label="Family medical history"
+            label="Family medical history (if exists)"
             placeholder="father had Arthritis, uncle had Alzheimer's Disease, etc.."
           />
           <CustomFormField
             fieldType={FormFieldType.TEXTAREA}
             control={form.control}
             name="pastMedicalHistory"
-            label="Past medical history"
+            label="Past medical history (if exists)"
             placeholder="Appendectomy, Tonsillectomy"
           />
         </div>
@@ -303,8 +327,8 @@ const RegisterForm = ({ user }: { user: User }) => {
           label="Identification type"
           placeholder="Select an identification type"
         >
-          {IdentificationTypes.map((type) => (
-            <SelectItem key={type} value={type}>
+          {IdentificationTypes.map((type, i) => (
+            <SelectItem key={type + i} value={type}>
               {type}
             </SelectItem>
           ))}
