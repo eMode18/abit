@@ -5,9 +5,8 @@ import {
   APPOINTMENT_COLLECTION_ID,
   DATABASE_ID,
   databases,
-  messaging,
 } from "../appwrite.config";
-import { formatDateTime, parseStringify } from "../utils";
+import { parseStringify } from "../utils";
 import { Appointment } from "@/types/appwrite.types";
 import { revalidatePath } from "next/cache";
 
@@ -99,8 +98,10 @@ export const updateAppointment = async ({
       appointment
     );
 
+    console.log("Updating appointment with ID:", appointmentId);
+
     if (!updatedAppointment) {
-      throw new Error("Appointment not made");
+      throw Error;
     }
 
     // TODO SMS notification

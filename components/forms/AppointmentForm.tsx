@@ -55,7 +55,7 @@ const AppointmentForm = ({
         : new Date(Date.now()),
       reason: appointment ? appointment.reason : "",
       note: appointment?.note || "",
-      cancelationReason: appointment ? appointment.cancellationReason : "",
+      cancelationReason: appointment?.cancellationReason || "",
     },
   });
 
@@ -69,7 +69,7 @@ const AppointmentForm = ({
 
     switch (type) {
       case "schedule":
-        status = "sheduled";
+        status = "scheduled";
         break;
       case "cancel":
         status = "canceled";
@@ -80,7 +80,7 @@ const AppointmentForm = ({
 
     try {
       if (type === "create" && patientId) {
-        const appointment = {
+        const appointmentData = {
           userId,
           patient: patientId,
           primaryPhysician: values.primaryPhysician,
@@ -90,34 +90,32 @@ const AppointmentForm = ({
           status: status as Status,
         };
 
-        const newAppointment = await createAppointment(appointment);
+        const appointment = await createAppointment(appointmentData);
 
-        if (newAppointment) {
+        if (appointment) {
           form.reset();
           router.push(
-            `/patients/${userId}/new-appointment/success?appointmentId=${newAppointment.$id}`
+            `/patients/${userId}/new-appointment/success?appointmentId=${appointment.$id}`
           );
-        } else {
-          const appointmentToUpdate = {
-            userId,
-            appointmentId: appointment?.$id!,
-            appointment: {
-              primaryPhysician: values.primaryPhysician,
-              schedule: new Date(values.schedule),
-              status: status as Status,
-              cancelationReason: values.cancelationReason,
-            },
-            type,
-          };
+        }
+      } else {
+        const appointmentToUpdate = {
+          userId,
+          appointmentId: appointment?.$id!,
+          appointment: {
+            primaryPhysician: values.primaryPhysician,
+            schedule: new Date(values.schedule),
+            status: status as Status,
+            cancelationReason: values.cancelationReason,
+          },
+          type,
+        };
 
-          const updatedAppointment = await updateAppointment(
-            appointmentToUpdate
-          );
+        const updatedAppointment = await updateAppointment(appointmentToUpdate);
 
-          if (updatedAppointment) {
-            setOpen && setOpen(false);
-            form.reset();
-          }
+        if (updatedAppointment) {
+          setOpen && setOpen(false);
+          form.reset();
         }
       }
     } catch (error) {
@@ -189,6 +187,7 @@ const AppointmentForm = ({
               label="Expected appointment date"
               showTimeSelect
               dateFormat="MM/dd/yyyy - h:mm aa"
+              placeholder="MM/dd/yyyy"
             />
 
             <div
