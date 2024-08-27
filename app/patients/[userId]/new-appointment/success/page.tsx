@@ -42,7 +42,7 @@ const RequestSuccess = async ({
             Your <span className="text-green-500">appointment request</span> has
             been submitted successfully
           </h2>
-          <p>You'll receive your appointment confirmation shortly</p>
+          <p>You&rsquo;ll receive your appointment confirmation shortly</p>
         </section>
 
         <section className="request-details">
@@ -73,6 +73,9 @@ const RequestSuccess = async ({
           <Link href={`/patients/${userId}/new-appointment`}>
             New Appointment
           </Link>
+        </Button>
+        <Button variant="outline" className="shad-primary-btn" asChild>
+          <Link href="/">Go Back</Link>
         </Button>
 
         <p className="copyright">© 2024 AtibCare</p>
