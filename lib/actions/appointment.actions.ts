@@ -99,8 +99,6 @@ export const updateAppointment = async ({
       appointment
     );
 
-    console.log("Updating appointment with ID:", appointmentId);
-
     if (!updatedAppointment) {
       throw Error;
     }
