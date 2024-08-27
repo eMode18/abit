@@ -5,8 +5,9 @@ import {
   APPOINTMENT_COLLECTION_ID,
   DATABASE_ID,
   databases,
+  messaging,
 } from "../appwrite.config";
-import { parseStringify } from "../utils";
+import { formatDateTime, parseStringify } from "../utils";
 import { Appointment } from "@/types/appwrite.types";
 import { revalidatePath } from "next/cache";
 
@@ -104,11 +105,38 @@ export const updateAppointment = async ({
       throw Error;
     }
 
-    // TODO SMS notification
+    // send sms upon appointment schedule
+    const smsMessage = `
+    Hello, It's AtibCare.
+    ${
+      type === "schedule"
+        ? `Your appointment has been scheduled for ${
+            formatDateTime(appointment.schedule!).dateTime
+          }. Attending doctor: ${appointment.primaryPhysician}`
+        : `We regret to inform you that your appointment has been canceled due to: ${appointment.cancelationReason}`
+    }
+    `;
+
+    await sendSMSNotification(userId, smsMessage);
 
     revalidatePath(`/admin`);
 
     return parseStringify(updatedAppointment);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const sendSMSNotification = async (userId: string, content: string) => {
+  try {
+    const message = await messaging.createSms(
+      ID.unique(),
+      content,
+      [],
+      [userId]
+    );
+
+    return parseStringify(message);
   } catch (error) {
     console.log(error);
   }
